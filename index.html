@@ -14,13 +14,21 @@
         padding: 0;
         text-align: center;
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .section {
         background-color: #1e1e1e;
         padding: 20px;
-        margin: 20px auto;
+        margin-left: 20px auto; /* Center and margin */
+        margin-right: 20px auto;
+        margin-top: 5px;
+        margin-bottom: 5px;
         border-radius: 10px;
         max-width: 400px;
+        width: 90%;
+        box-sizing: border-box;
     }
     h1 {
         color: #5E99F8;
@@ -206,7 +214,19 @@ function calculateSWG() {
     for (let i = 0; i < swgTable.length; i++) {
         if (inches >= swgTable[i][1]) {
             if (mode === 'bestFit') {
-                closestIndex = i;
+                const exactMatchIndex = swgTable.findIndex(row => Math.abs(row[1] - inches) < 1e-9);
+                if (exactMatchIndex !== -1) {
+                    closestIndex = exactMatchIndex;
+                } else {
+                    const xIndex = i;
+                    const yIndex = i - 1 >= 0 ? i - 1 : i;
+                    const x = swgTable[xIndex][1];
+                    const y = swgTable[yIndex][1];
+                    const z = x - y;
+                    const threshold = x - 0.2 * z;
+
+                    closestIndex = (inches >= threshold) ? xIndex : yIndex;
+                }
             } else {
                 const prevDiff = Math.abs(swgTable[i-1]?.[1] - inches);
                 const currDiff = Math.abs(swgTable[i][1] - inches);
@@ -217,7 +237,7 @@ function calculateSWG() {
     }
 
     document.getElementById('swgResult').innerText = `SWG: ${swgTable[closestIndex][0]}`;
-    document.getElementById('mmResult').innerText = `mm: ${swgTable[closestIndex][2].toFixed(3)}`;
+    document.getElementById('mmResult').innerText = `${(inches*25.4).toFixed(3)}`;
 }
 
 function calculateCost() {
