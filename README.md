@@ -1,4 +1,4 @@
-# Inches2SWG ~ Shalini Electricals, Jabalpur.
+# Inches2SWG
 This tool lets you convert inches to Standard Wire Gauge (SWG) or mm units.
 
 How To Use:
